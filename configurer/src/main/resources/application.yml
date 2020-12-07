@@ -1,0 +1,13 @@
+server:
+    port: 8888
+    tomcat:
+        max-threads: 400
+spring:
+    application:
+        name: mezubo-rulete-configurer
+    cloud:
+        config:
+            server:
+                git:
+                    uri: https://github.com/yahercarrillo/mezubo.git
+                    
