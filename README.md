@@ -10,8 +10,12 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 
 Estructura de 3 proyectos :
 
-commons: estructura con objetos comunes
-configurer: Configurador de propiedades y en donde ademas se aloja el POM padre
+
+### Componentes 📋
+* COMMONS: estructura con objetos comunes
+* CONFIGURER: Configurador de propiedades y en donde ademas se aloja el POM padre
+* STORAGE: Api Expuesta
+* DATABASE: Estructura de base de datos, bajo DB-MIGRATE
 
 
 ### Pre-requisitos 📋
