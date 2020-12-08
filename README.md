@@ -2,7 +2,7 @@
 
 Elemento donde se alojaran las configuraciones
 y procesos de automatizacion de bases de datos
-bajo la herramienta DB-MIGRATE
+bajo la herramienta DB-MIGRATE y Back End Bajo Java
 
 ## Comenzando 🚀
 
@@ -10,7 +10,7 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 
 Estructura de 3 proyectos :
 
-commons: estructura co objetos comunes
+commons: estructura con objetos comunes
 configurer: Configurador de propiedades y en donde ademas se aloja el POM padre
 
 
