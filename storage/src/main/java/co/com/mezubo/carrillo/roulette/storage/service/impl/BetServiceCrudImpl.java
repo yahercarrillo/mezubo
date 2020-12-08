@@ -2,11 +2,15 @@ package co.com.mezubo.carrillo.roulette.storage.service.impl;
 
 import co.com.mezubo.carrillo.roulette.storage.dao.MzbRouletteBetsDao;
 import co.com.mezubo.carrillo.roulette.storage.dao.MzbRouletteDao;
+import co.com.mezubo.carrillo.roulette.storage.dao.MzbUsersDao;
 import co.com.mezubo.carrillo.roulette.storage.dto.SpinWinner;
 import co.com.mezubo.carrillo.roulette.storage.entity.MzbRoulette;
 import co.com.mezubo.carrillo.roulette.storage.entity.MzbRouletteBets;
+import co.com.mezubo.carrillo.roulette.storage.entity.MzbUsers;
 import co.com.mezubo.carrillo.roulette.storage.enumutil.ColorsRoulette;
 import co.com.mezubo.carrillo.roulette.storage.service.BetServiceCrud;
+import co.com.mezubo.carrillo.roulette.storage.session.SessionRoulette;
+import co.com.mezubo.carrillo.roulette.storage.session.SessionTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -15,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BetServiceCrudImpl implements BetServiceCrud {
@@ -25,6 +31,12 @@ public class BetServiceCrudImpl implements BetServiceCrud {
 
     @Autowired
     MzbRouletteDao rouletteDao;
+
+    @Autowired
+    MzbUsersDao userDao;
+
+    @Autowired
+    SessionTokenRepository sessionToken;
 
     @Value("${security.jwt.token.min-length}")
     private long minSpin;
@@ -45,9 +57,19 @@ public class BetServiceCrudImpl implements BetServiceCrud {
     @Override
     public void insert(MzbRouletteBets bet) {
 
+
+        final Iterable<SessionRoulette> sessionTokenOpt = sessionToken.findAll();
+        if (size(sessionTokenOpt) > maxSpin)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Roulette exceed the limit to bets!. Only have [" + maxSpin + "] bets");
+
         MzbRoulette roulette = rouletteDao.findById(bet.getId_roulette());
-        if (!roulette.isEnable())
+        if (roulette == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Roulette Dont Exist!");
+        else if (!roulette.isEnable())
             throw new ResponseStatusException(HttpStatus.DESTINATION_LOCKED, "Roulette Blocked!");
+
+        if (bet.getNumbergame() < minSpin || bet.getNumbergame() > maxSpin)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Number Game Not Valid!");
 
         bet.setColorgame(this.extractColor(bet.getNumbergame()).name());
 
@@ -64,6 +86,14 @@ public class BetServiceCrudImpl implements BetServiceCrud {
         if (bet.getMoney().compareTo(maxBet) > 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bet exceed the limit!");
 
+
+        MzbUsers user = userDao.findByNickName(bet.getUsergame());
+        bet.setUsergame(user.getId());
+
+        user.setCredit(user.getCredit().subtract(bet.getMoney()));
+        userDao.update(user);
+
+        sessionToken.save(new SessionRoulette(bet.getNumbergame(), bet.getUsergame()));
         betDao.insert(bet);
     }
 
@@ -75,6 +105,11 @@ public class BetServiceCrudImpl implements BetServiceCrud {
         MzbRoulette roulette = rouletteDao.findById(bet.getId_roulette());
         if (roulette == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Roulette Dont Exist!");
+        else if (!roulette.isEnable())
+            throw new ResponseStatusException(HttpStatus.DESTINATION_LOCKED, "Roulette Blocked!");
+
+        if (bet.getNumbergame() < minSpin || bet.getNumbergame() > maxSpin)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Number Game Not Valid!");
 
         MzbRouletteBets item = betDao.findByNumberGame(bet.getNumbergame());
         if (item != null && !item.getId().equals(bet.getId()))
@@ -85,7 +120,17 @@ public class BetServiceCrudImpl implements BetServiceCrud {
         if (betFind == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bet Dont Exist!");
 
+        BigDecimal maxBet = new BigDecimal(betMax);
+        if (bet.getMoney().compareTo(maxBet) > 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bet exceed the limit!");
+
+        MzbUsers user = userDao.findByNickName(bet.getUsergame());
+        bet.setUsergame(user.getId());
+        bet.setColorgame(this.extractColor(bet.getNumbergame()).name());
         betDao.update(bet);
+
+        user.setCredit(user.getCredit().subtract(bet.getMoney()));
+        userDao.update(user);
 
     }
 
@@ -130,7 +175,7 @@ public class BetServiceCrudImpl implements BetServiceCrud {
         double min = (double) minSpin;
         double max = (double) maxSpin;
         double numberwin = getRandomDIntBetweenRange(min, max);
-        SpinWinner spinWinner = extractDataWinner(id,numberwin);
+        SpinWinner spinWinner = extractDataWinner(id, numberwin);
         return ResponseEntity.ok(spinWinner);
     }
 
@@ -144,6 +189,7 @@ public class BetServiceCrudImpl implements BetServiceCrud {
     private SpinWinner extractDataWinner(String idRoulette, double numberwin) {
         SpinWinner spinWinner = new SpinWinner();
         spinWinner.setNumber((int) numberwin);
+        spinWinner.setColor(extractColor((int) numberwin).name());
         MzbRouletteBets bet = betDao.findByNumberGame((int) numberwin);
         if (bet != null) {
             spinWinner.setAmount(calculateMoneyWinnerForNumber(bet));
@@ -151,19 +197,38 @@ public class BetServiceCrudImpl implements BetServiceCrud {
             spinWinner.setColor(bet.getColorgame());
             MzbRoulette roulette = rouletteDao.findById(bet.getId_roulette());
             spinWinner.setRoulette(roulette.getCode());
+            updateMoneyWinners(bet, spinWinner.getAmount());
         } else {
             List<MzbRouletteBets> listwinnersPartial = betDao.findByUsersByColorGame(idRoulette, (extractColor((int) numberwin)).name());
-            if (listwinnersPartial != null && !listwinnersPartial.isEmpty()){
+            if (listwinnersPartial != null && !listwinnersPartial.isEmpty()) {
                 spinWinner.setListWinnersPartial(listwinnersPartial);
-                for (MzbRouletteBets item: listwinnersPartial){
+                spinWinner.setPerson(HttpStatus.PARTIAL_CONTENT.toString());
+                for (MzbRouletteBets item : listwinnersPartial) {
                     item.setMoney(calculateMoneyWinnerForColor(item));
+                    updateMoneyWinners(item, item.getMoney());
                 }
-            }
-            else {
+            } else {
                 spinWinner.setPerson(HttpStatus.NOT_FOUND.toString());
             }
         }
         return spinWinner;
+    }
+
+    void updateMoneyWinners(MzbRouletteBets bet, BigDecimal money) {
+        MzbUsers user = userDao.findById(bet.getUsergame());
+        user.setCredit(user.getCredit().add(money));
+        userDao.update(user);
+    }
+
+    public static int size(Iterable data) {
+        if (data instanceof Collection) {
+            return ((Collection<?>) data).size();
+        }
+        int counter = 0;
+        for (Object i : data) {
+            counter++;
+        }
+        return counter;
     }
 
     private BigDecimal calculateMoneyWinnerForNumber(MzbRouletteBets bet) {

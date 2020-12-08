@@ -1,0 +1,47 @@
+spring:
+  redis:
+    host: ${MEZUBO_URL_REDIS}
+    port: ${MEZUBO_URL_REDIS_PORT}
+  application:
+    name: storage
+  datasource:
+    url: jdbc:postgresql://${MEZUBO_URL_DB}:5432/mezubo?stringtype=unspecified
+    username: ${MEZUBO_USER_DB}
+    password: ${MEZUBO_PASS_DB}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL82Dialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+          time_zone: UTC
+        show-sql: true
+        format_sql: true
+
+
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /actuator/docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, env
+
+security:
+  jwt:
+    token:
+      min-length: 0 # min
+      max-length: 36 # max
+      winner-number: 5 # max
+      winner-color: '1.8' # max
+      bet-max: '10000' # max
+
+
+
+
+

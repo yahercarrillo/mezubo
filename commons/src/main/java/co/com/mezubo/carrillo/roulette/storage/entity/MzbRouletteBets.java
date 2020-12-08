@@ -23,7 +23,6 @@ public class MzbRouletteBets {
     private String colorgame;
     @NotNull(message = "Code cannot be null")
     private BigDecimal money;
-    @NotNull(message = "Code cannot be null")
     private String usergame;
 
     public String getId() {

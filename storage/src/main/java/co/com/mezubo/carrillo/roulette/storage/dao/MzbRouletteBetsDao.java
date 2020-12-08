@@ -19,6 +19,8 @@ public interface MzbRouletteBetsDao {
 
     MzbRouletteBets findById(String id);
 
+    List<MzbRouletteBets> findByIdRoulette(String id);
+
     MzbRouletteBets findByNumberGame(int numberGame);
 
     MzbRouletteBets findByUserGame(String usergame);

@@ -4,7 +4,7 @@ CREATE TABLE TBL_MZB_ROULETTE_BETS(
    numbergame  int    NOT NULL,
    colorgame   VARCHAR(60)      NOT NULL,
    money   FLOAT      NOT NULL,
-   usergame    VARCHAR(60) ,
+   usergame    uuid ,
    UNIQUE(numbergame),
    PRIMARY KEY (id)
 );

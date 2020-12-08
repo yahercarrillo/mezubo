@@ -75,9 +75,9 @@ public class BusinessController {
             @ApiResponse(code = 423, message = "423", response = String.class)})
     @PostMapping(value = "/createBet")
     @ResponseStatus(HttpStatus.OK)
-    public void createBet(@Valid @RequestBody MzbRouletteBets emp) {
+    public void createBet(@Valid @RequestBody MzbRouletteBets emp, @RequestHeader("Authorization") String user) {
+        emp.setUsergame(user.substring(3));
         betServiceCrud.insert(emp);
-
     }
 
     @ApiOperation(value = "create Bet", notes = "Crea una apuesta")
@@ -88,7 +88,8 @@ public class BusinessController {
             @ApiResponse(code = 423, message = "423", response = String.class)})
     @PutMapping(value = "/updateBet")
     @ResponseStatus(HttpStatus.OK)
-    public void updateBet(@Valid @RequestBody MzbRouletteBets emp) {
+    public void updateBet(@Valid @RequestBody MzbRouletteBets emp, @RequestHeader("Authorization") String user) {
+        emp.setUsergame(user.substring(3));
         betServiceCrud.update(emp);
     }
 
