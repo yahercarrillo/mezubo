@@ -1,0 +1,210 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Mezubo",
+		"_postman_id": "318d803d-78db-9c00-4094-77f2cb6ce2e0",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Storage",
+			"description": "",
+			"item": [
+				{
+					"name": "CREATE ROULETTE",
+					"request": {
+						"url": "localhost:8081/storage/v1/roulette/create",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"code\":\"mesa1\",\n\t\"description\":\"mesa1\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "FINDALL-ROULETTE",
+					"request": {
+						"url": "localhost:8081/storage/v1/roulette/",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "FIND-ROULETTE-BY-ID",
+					"request": {
+						"url": "localhost:8081/storage/v1/roulette/id/0855e402-7ee5-47da-9fe6-750809871cb0",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "FIND-ROULETTE-BY-CODE",
+					"request": {
+						"url": "localhost:8081/storage/v1/roulette/code/mesa1",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE-BET",
+					"request": {
+						"url": "localhost:8081/storage/v1/roulette/createBet",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Id YAHER",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id_roulette\":\"f5aa1c6b-abb6-4548-994a-9f58c60df873\",\n\t\"numbergame\":\"36\",\n\t\"money\":\"100\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "USERS",
+			"description": "",
+			"item": [
+				{
+					"name": "CREATE",
+					"request": {
+						"url": "localhost:8081/storage/v1/users",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nickname\":\"YAHER\",\n\t\"description\":\"Yaher Carrillo\",\n\t\"credit\":\"500000\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE",
+					"request": {
+						"url": "localhost:8081/storage/v1/users",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nickname\":\"YAHER\",\n\t\"description\":\"Yaher Carrillo\",\n\t\"credit\":\"100\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "FINDALL",
+					"request": {
+						"url": "localhost:8081/storage/v1/users",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "UPDATE-BET",
+			"request": {
+				"url": "localhost:8081/storage/v1/roulette/updateBet",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Id YAHER",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":\"a234d26d-9530-40a4-b485-38742c952bbf\",\n\t\"id_roulette\":\"f5aa1c6b-abb6-4548-994a-9f58c60df873\",\n\t\"numbergame\":\"5\",\n\t\"money\":\"100000\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "CLOSE-ROULETTE",
+			"request": {
+				"url": "localhost:8081/storage/v1/roulette/closeRoulette/14764a66-d750-45f1-9c6b-15156dff60bb",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "OPEN-ROULETTE",
+			"request": {
+				"url": "localhost:8081/storage/v1/roulette/openRoulette/14764a66-d750-45f1-9c6b-15156dff60bb",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "SPING-ROULETTE",
+			"request": {
+				"url": "localhost:8081/storage/v1/roulette/spinRoulette/f5aa1c6b-abb6-4548-994a-9f58c60df873",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
