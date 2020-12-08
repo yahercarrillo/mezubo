@@ -1,0 +1,27 @@
+Argumentos - Refactor 001
+
+1.-) Al manipular los Stream de datos, mas alla de su manipulacion
+	 no se esta cerrando el stream. "FileOutputStream.close". Siempre
+	 debe cerrarse un stream.
+	 
+	 
+2.-) Manejo de semantica inapropiada para las variables internas de los metodos
+	 Torna la administracion del desarrollo, cuesta arriba si dichos metodos
+	 tienden a crecer.
+	 
+3.-) El metodo saveConten a pesar de funcionar, tiene mal manejo de sus procesos, es decir
+	 se recorre el contenido caracter por caracter, generando mas proceso a nivel operativo. 
+	 Se puede escribir el contenido de entrada en "byte b[] = content.getBytes();" y se evita el procesamiento.
+
+
+4.-) El metodo saveContent, no esta capturando las fallas
+     de administracion de elementos InputStream, lo que puede generar
+	 problemas en tiempos de compilacion "throws FileNotFoundException".
+	 O bien se puede capturar la misma con la sentencia Try - Catch y manipular
+	 una accion, tambien se pudiera replegar dicha excepcion a traves de su llamado.
+	 
+5.-) La lectura del archivo se esta realizando mientras existan bytes, no se esta teniendo
+     en cuenta el final del archivo. Se pudiera mejorar la condicion de lectura 
+	 de la siguiente forma " while ((data = i.read()) !=-1)", garantiza lectura hasta el final del archivo.
+	 Una implementación de Java sin errores nunca devolverá nada más que indique que no hay más datos disponibles.
+	 

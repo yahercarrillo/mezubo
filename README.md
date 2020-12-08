@@ -46,7 +46,10 @@ DOCKER
 * **Instalar Dependencias** - *DevOps* - A continuacion, mirar el archivo DickerFile contenido en el proyecto.
 
 
+RESPUESTAS EJERCICIO CONCEPTUAL
 
+En el contenido del archivo "RespuestasRefactoring", pueden verificar
+los criterios a los conceptos del ejercicio de refactoring
 
 
 
